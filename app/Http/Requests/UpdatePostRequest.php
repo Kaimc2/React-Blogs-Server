@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class StorePostRequest extends FormRequest
+class UpdatePostRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,13 +22,19 @@ class StorePostRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'title' => ['required', 'min:3', 'max:50', Rule::unique('posts')->ignore($this->post)],
+        $rules = [
+            'title' => 'required|min:3|max:50|unique:posts,title,' . $this->post->id . ',id',
+            'body' => 'required|max:2000',
             // 'slug' => ['required', Rule::unique('posts')->ignore($this->post)],
-            'body' => ['required', 'min:3', 'max:2000'],
             'category_id' => ['required'],
-            'author_id' => ['required'],
-            'thumbnail' => ['required', 'image', 'mimes:png,jpg,jpeg'],
         ];
+
+        // Check if the 'thumbnail' key exists in the request
+        if ($this->hasFile('thumbnail')) {
+            // If it exists, add validation rules for the thumbnail
+            $rules['thumbnail'] = 'image|mimes:jpeg,png,jpg';
+        }
+
+        return $rules;
     }
 }

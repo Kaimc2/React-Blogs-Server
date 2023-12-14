@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Random\Randomizer;
 
 class PostSeeder extends Seeder
 {
@@ -15,9 +17,10 @@ class PostSeeder extends Seeder
     {
         DB::table("posts")->insert([
             "title"=> fake()->name,
+            "thumbnail" => storage_path("placeholder.jpg"),
             "slug"=> fake()->slug,
-            "body"=> fake()->text,
-            "user_id"=> 1,
+            "body"=> fake()->paragraphs,
+            "author_id"=> User::all()->random()->id,
         ]);
     }
 }

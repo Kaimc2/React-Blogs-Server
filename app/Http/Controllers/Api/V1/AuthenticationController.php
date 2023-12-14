@@ -7,11 +7,10 @@ use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 
-class AuthController extends Controller
+class AuthenticationController extends Controller
 {
     public function register(Request $request): JsonResponse
     {
@@ -27,11 +26,13 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        $token = $user->createToken('ACCESS_TOKEN')->plainTextToken;
+
         return response()->json([
             'user' => new UserResource($user),
-            'token' => $user->createToken('ACCESS_TOKEN')->plainTextToken,
+            'token' => $token,
             "message" => "Register successfully",
-        ]);
+        ])->withCookie("token", $token);
     }
 
     public function login(Request $request)
@@ -47,11 +48,13 @@ class AuthController extends Controller
             return response()->json(["message" => "Email or password is incorrect"], 401);
         }
 
+        $token = $user->createToken('ACCESS_TOKEN')->plainTextToken;
+
         return response()->json([
             'user' => new UserResource($user),
-            'token' => $user->createToken('ACCESS_TOKEN')->plainTextToken,
+            'token' => $token,
             "message" => "Login successfully"
-        ]);
+        ])->withCookie("token", $token);
     }
 
     public function logout(Request $request)
