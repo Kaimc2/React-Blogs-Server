@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\V1;
 
+use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -14,24 +15,25 @@ class PostResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
-            // "data" => [
-            //     "id" => $this->id,
-            //     "title" => $this->title,
-            //     "slug" => $this->slug,
-            //     "body" => $this->body,
-            // ],
-            // "relationships" => [
-            //     "author_id" => $this->user->id,
-            //     "author" => $this->user->name,
-            // ],
+        $latestComments = Comment::latest()->with('user')->where('post_id', '=', $this->id)->get();
 
-            "id" => $this->id,
-            "title" => $this->title,
-            "slug" => $this->slug,
-            "body" => $this->body,
-            "user_id" => $this->user->id,
-            "author" => $this->user->name,
+        return [
+            "post" => [
+                "id" => $this->id,
+                "title" => $this->title,
+                "thumbnail" => "storage/thumbnails/" . $this->thumbnail,
+                "slug" => $this->slug,
+                "category" => $this->category->name,
+                "category_id" => $this->category->id,
+                "body" => $this->body,
+            ],
+            "relationships" => [
+                "author_id" => $this->author_id,
+                "author_pf" => "storage/profiles/" . $this->user->profile,
+                "author" => $this->user->name,
+                "comments" => $this->comments->isEmpty() ? [] : CommentResource::collection($latestComments),
+                // "comments" => $this->comments->isEmpty() ? [] : CommentResource::collection($this->comments),
+            ]
         ];
     }
 }

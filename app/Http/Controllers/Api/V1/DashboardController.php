@@ -11,7 +11,7 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $posts = Post::where("user_id", $request->user()->id)->get();
+        $posts = Post::where("author_id", $request->user()->id)->get();
 
         return response()->json(["data" => PostResource::collection($posts), "message" => "Data fetched"]);
     }
