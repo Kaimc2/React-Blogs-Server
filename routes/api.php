@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthenticationController;
+use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\CommentController;
 use App\Http\Controllers\Api\V1\DashboardController;
 use Illuminate\Support\Facades\Route;
@@ -24,13 +25,18 @@ Route::group(['prefix' => 'v1'], function () {
     Route::apiResource('posts', PostController::class);
     Route::post('/register', [AuthenticationController::class, 'register']);
     Route::post('/login', [AuthenticationController::class, 'login']);
-    Route::get('/categories', [PostController::class, 'category']);
+    Route::get('/categories', [CategoryController::class, 'index']);
+    Route::get('/categories/{category}', [CategoryController::class, 'show']);
 
     // Protected Routes
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthenticationController::class, 'logout']);
         Route::get('/user', [AuthenticationController::class, 'user']);
+
         Route::get('/dashboard/posts', [DashboardController::class, 'index']);
+        Route::post('/dashboard/categories/create', [CategoryController::class, 'store']);
+        Route::put('/dashboard/categories/{category}', [CategoryController::class, 'update']);
+        Route::delete('/dashboard/categories/{category}', [CategoryController::class, 'destroy']);
         Route::put('/dashboard/account', [UserController::class, 'update']);
 
         Route::post('/comment/create', [CommentController::class, 'store']);

@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
-use App\Http\Resources\CategoryResource;
-use App\Models\Category;
 use App\Models\Post;
 use App\Http\Resources\V1\PostResource;
 use Illuminate\Http\Request;
@@ -15,7 +13,6 @@ class PostController extends Controller
 {
     public function index(Request $request)
     {
-        // $posts = Post::latest()->paginate(10);
         $posts = Post::when(
             $request->input('search'),
             fn ($query, $search) => $query->where('title', 'like', "%$search%")
@@ -23,7 +20,7 @@ class PostController extends Controller
             ->when(
                 $request->input('category'),
                 fn ($query, $category) => $query->whereHas('category', function ($subQuery) use ($category) {
-                    $subQuery->where('name', 'like', "%$category%");
+                    $subQuery->where('name', '=', "$category");
                 })
             )->with('category')->latest()->paginate(10);
 
@@ -42,10 +39,6 @@ class PostController extends Controller
     public function store(StorePostRequest $request)
     {
         $request->validated();
-        // return response()->json([
-        //     'message' => 'Success',
-        //     'request_data' => $request->all(),
-        // ]);
 
         if ($request->hasFile("thumbnail")) {
             $thumbnail = $request->file("thumbnail");
@@ -67,7 +60,6 @@ class PostController extends Controller
     public function update(UpdatePostRequest $request, Post $post)
     {
         $request->validated();
-        // Debug the incoming request
         // return response()->json([
         //     'message' => 'Success',
         //     'request_data' => $request->all(),
@@ -78,7 +70,7 @@ class PostController extends Controller
         }
 
         if ($request->hasFile("thumbnail")) {
-            if (file_exists(public_path("storage/thumbnails/" . $post->thumbnail) && $post->thumbnail !== "placeholder.jpg")) {
+            if (file_exists(public_path("storage/thumbnails/" . $post->thumbnail)) && $post->thumbnail !== "placeholder.jpg") {
                 unlink(public_path("storage/thumbnails/" . $post->thumbnail));
             }
 
@@ -113,11 +105,5 @@ class PostController extends Controller
         $post->delete();
 
         return response()->json("Post Deleted");
-    }
-
-    public function category()
-    {
-        $categories = Category::all();
-        return CategoryResource::collection($categories);
     }
 }
