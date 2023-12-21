@@ -16,9 +16,9 @@ class PostSeeder extends Seeder
     public function run(): void
     {
         DB::table("posts")->insert([
-            "title"=> fake()->name,
+            "title"=> fake()->unique()->name,
             "thumbnail" => storage_path("placeholder.jpg"),
-            "slug"=> fake()->slug,
+            "slug"=> fake()->unique()->slug,
             "body"=> fake()->paragraphs,
             "author_id"=> User::all()->random()->id,
         ]);

@@ -21,9 +21,8 @@ class UserController extends Controller
             ]);
         }
 
-
         if ($request->hasFile("profile")) {
-            if (file_exists(public_path("storage/profiles/" . $user->profile))) {
+            if (file_exists(public_path("storage/profiles/" . $user->profile)) && $user->profile !== "pf.png") {
                 unlink(public_path("storage/profiles/" . $user->profile));
             }
 

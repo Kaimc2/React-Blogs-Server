@@ -11,7 +11,9 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $posts = Post::where("author_id", $request->user()->id)->get();
+        $posts = Post::where("author_id", $request->user()->id)
+            ->when($request->input('search'), fn ($query, $search) => $query->where('title', 'like', "%$search%"))
+            ->get();
 
         return response()->json(["data" => PostResource::collection($posts), "message" => "Data fetched"]);
     }
