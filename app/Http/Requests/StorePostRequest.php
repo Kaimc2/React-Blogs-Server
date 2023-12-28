@@ -25,7 +25,7 @@ class StorePostRequest extends FormRequest
         return [
             'title' => ['required', 'min:3', 'max:50', Rule::unique('posts')->ignore($this->post)],
             // 'slug' => ['required', Rule::unique('posts')->ignore($this->post)],
-            'body' => ['required', 'min:3', 'max:2000'],
+            'body' => ['required', 'min:3'],
             'category_id' => ['required'],
             'author_id' => ['required'],
             'thumbnail' => ['required', 'image', 'mimes:png,jpg,jpeg'],

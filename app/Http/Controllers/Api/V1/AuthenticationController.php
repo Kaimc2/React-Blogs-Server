@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\UserResource;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
@@ -15,7 +16,7 @@ class AuthenticationController extends Controller
     public function register(Request $request): JsonResponse
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255', 'unique:users,name,except,id'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
@@ -27,6 +28,8 @@ class AuthenticationController extends Controller
         ]);
 
         $token = $user->createToken('ACCESS_TOKEN')->plainTextToken;
+
+        event(new Registered($user));
 
         return response()->json([
             'user' => new UserResource($user),

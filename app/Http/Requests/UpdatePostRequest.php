@@ -24,7 +24,7 @@ class UpdatePostRequest extends FormRequest
     {
         $rules = [
             'title' => 'required|min:3|max:50|unique:posts,title,' . $this->post->id . ',id',
-            'body' => 'required|max:2000',
+            'body' => 'required',
             // 'slug' => ['required', Rule::unique('posts')->ignore($this->post)],
             'category_id' => ['required'],
         ];
