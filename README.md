@@ -2,7 +2,7 @@
 
 ## About Project
 
-React-Blogs Server is a simple backend API server created to be used with the React frontend to learn about the connection between the frontend and backend as well as learn the fundamentals in the making of API. 
+React-Blogs Server is a simple backend API server created to be used with the [React Frontend](https://github.com/Kaimc2/React-Blogs) to learn about the connection between the frontend and backend as well as learn the fundamentals in the making of API. 
 Powered by Laravel.
 
 ## Running Guide
